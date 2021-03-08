@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type='text/javascript' src="/dist/assets/node_modules/jquery/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-wrapper">
+
+        <div class="container-fluid">
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h4 class="text-themecolor">Basic Form</h4>
+                </div>
+                <div class="col-md-7 align-self-center text-right">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                            <li class="breadcrumb-item active">Basic Form</li>
+                        </ol>
+                        <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i
+                                class="fa fa-plus-circle"></i> Create New
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!--                Role card -->
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Ajouter des nouveaux Roles</h4>
+                            <form th:action="@{/autorisation/role}" method="post" th:object="${role}" class="mt-4">
+                                <div class="form-group">
+                                    <label for="roleName">Role name</label>
+                                    <input type="text" th:field="*{name}" class="form-control" id="roleName"
+                                           placeholder="Enter Role Name">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Ajouter des nouveaux Permission</h4>
+                            <form th:action="@{/autorisation/permission}" method="post" th:object="${permissionApp}"
+                                  class="mt-4">
+                                <div class="form-group">
+                                    <label for="permission">Permission name</label>
+                                    <input type="text" th:field="*{permission}" class="form-control" id="permission"
+                                           placeholder="Enter Permission Name">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- column -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Role Table</h4>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Role Name</th>
+                                        <th>Permission</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="role: ${allRoles}">
+                                        <td th:text="${role.id}"></td>
+                                        <td th:text="${role.name}"></td>
+                                        <td>
+                                            <span th:each="permission :${role.permissions}"
+                                                  th:text="${permission.permission}" class="label label-danger">
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-success editRole" th:id="${role.id}">
+                                                <i class="mdi-account-edit mdi"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Permission Table</h4>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Permission Name</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="permission: ${allPermissions}">
+                                        <td th:text="${permission.id}"></td>
+                                        <td th:text="${permission.permission}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        modal pour edit or ajouter un nouveaux Role-->
+        <div class="modal" id="roleModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal Heading</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form th:object="${role}" method="post" th:action="@{/autorisation/role}">
+                            <input type="hidden" th:field="*{id}" id="role_id">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="name">Role Name</label>
+                                        <input type="text"
+                                               th:field="*{name}"
+                                               class="form-control" id="name"
+                                               placeholder="Enter Role Name">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="custom-control custom-checkbox" th:each="permission :${allPermissions}">
+                                        <label>
+                                            <input th:value="${permission.id}" id="permissionUpdate" th:field="*{permissions}"
+                                                   type="checkbox"/> <span
+                                                th:text="${permission.permission}" th:remove="tag"> </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="submit" class="btn btn-primary" value="submit"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<section layout:fragment="js">
+    <script>
+        $(document).on('click', '.editRole', function () {
+            $("#role_id").val("");
+            $("#name").val("");
+            $("input[id='permissionUpdate']").each(function (index, val) {
+                $("input[id='permissionUpdate']")[index].checked = false;
+
+            })
+            var id = $(this).attr('id');
+            $.ajax({
+                type: 'get',
+                url: "/role/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $("#role_id").val(data.id);
+                    $("#name").val(data.name);
+                    console.log(data.permissions);
+
+                    $.each(data.permissions, function (i, v) {
+                        console.log(v);
+                        $("input[id='permissionUpdate']").each(function (index, val) {
+                            console.log($(this).val());
+                            if (v.id == $(this).val()) {
+                                $("input[id='permissionUpdate']")[index].checked = true;
+                            }
+                        })
+                    })
+                    $('#roleModal').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+    </script>
+</section>
+
+</body>
+</html>

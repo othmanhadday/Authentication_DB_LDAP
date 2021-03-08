@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type='text/javascript' src="/dist/assets/node_modules/jquery/jquery-3.2.1.min.js"></script>
+
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-wrapper" id="userPage">
+
+        <div class="container-fluid">
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h4 class="text-themecolor">Basic Form</h4>
+                </div>
+                <div class="col-md-7 align-self-center text-right">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                            <li class="breadcrumb-item active">Basic Form</li>
+                        </ol>
+                        <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i
+                                class="fa fa-plus-circle"></i> Create New
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <button class="btn btn-primary" id="newUser">
+            <i class="mdi mdi-account-multiple-plus"></i>
+        </button>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Gestion des Utilisateurs</h4>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Username</th>
+                            <th>Roles</th>
+                            <th>Permission</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="table-active" th:each="user :${users}">
+                            <td scope="row" th:text="${user.id}"></td>
+                            <td th:text="${user.nom}"></td>
+                            <td th:text="${user.username}"></td>
+                            <td>
+                                <div th:each="role :${user.roles}">
+                                    <span th:text="${role.name}"
+                                          class="label label-warning">
+                                        </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row">
+                                    <div th:each="permission :${user.permissions}">
+                                             <span th:text="${permission.permission}" aria-hidden='true'
+                                                   class=" label label-primary">
+                                             </span>
+                                    </div>
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <button class="btn btn-success editBtn" th:id="${user.id}">
+                                    <i class="mdi-account-edit mdi"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!--        modal pour edit or ajouter un nouveaux user-->
+        <div class="modal" id="myModalCreate">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal Heading</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+
+                        <form th:object="${user}" method="post" th:action="@{/user/createOrUpdateUser}">
+                            <input type="hidden" th:field="*{id}" id="user_id">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text"
+                                               th:field="*{nom}"
+                                               class="form-control" id="name"
+                                               placeholder="Enter Name">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="userName">Username</label>
+                                        <input type="text"
+                                               th:field="*{username}"
+                                               class="form-control" id="userName"
+                                               placeholder="Enter UserName">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h5>Select Roles</h5>
+                                    <div class="custom-control custom-checkbox" th:each="role :${allRoles}">
+                                        <label>
+                                            <input th:value="${role.id}" id="roles" th:field="*{roles}"
+                                                   type="checkbox"/> <span
+                                                th:text="${role.name}" th:remove="tag"> </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <h5>Select Permissions</h5>
+                                    <div class="custom-control custom-checkbox" th:each="permission :${allPermissions}">
+                                        <label>
+                                            <input th:value="${permission.id}" id="permissions"
+                                                   th:field="*{permissions}"
+                                                   type="checkbox"/> <span
+                                                th:text="${permission.permission}" th:remove="tag"> </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="submit" class="btn btn-primary" value="submit"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section layout:fragment="js">
+    <script>
+        $(document).on('click', '#newUser', function () {
+            $("#user_id").val("");
+            $("#name").val("");
+            $("#userName").val("");
+            $('#myModalCreate').modal('show');
+            $("input[id='roles']").checked = false;
+            $("input[id='permissions']").checked = false;
+        })
+
+        $(document).on('click', '.editBtn', function () {
+            $("#user_id").val("");
+            $("#name").val("");
+            $("#userName").val("");
+            $('#myModalCreate').modal('show');
+            $("input[id='roles']").each(function (index, val) {
+                $("input[id='roles']")[index].checked = false;
+
+            })
+            $("input[id='permissions']").each(function (index, val) {
+                $("input[id='permissions']")[index].checked = false;
+
+            })
+
+            var id = $(this).attr('id');
+            $.ajax({
+                type: 'get',
+                url: "/user/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $("#user_id").val(data.id);
+                    $("#name").val(data.nom);
+                    $("#userName").val(data.username);
+                    $.each(data.roles, function (i, v) {
+                        $("input[id='roles']").each(function (index, val) {
+                            if (v.id == $(this).val()) {
+                                $("input[id='roles']")[index].checked = true;
+                            }
+                        })
+                    })
+                    $.each(data.permissions, function (i, v) {
+                        $("input[id='permissions']").each(function (index, val) {
+                            if (v.id == $(this).val()) {
+                                $("input[id='permissions']")[index].checked = true;
+                            }
+                        })
+                    })
+                    $('#myModalCreate').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+    </script>
+</section>
+
+</body>
+
+</html>
