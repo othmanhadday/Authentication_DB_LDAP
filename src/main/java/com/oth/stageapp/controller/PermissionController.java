@@ -8,11 +8,10 @@ import com.oth.stageapp.service.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/autorisation")
@@ -29,7 +28,7 @@ public class PermissionController {
 
     @RequestMapping
     public String showPermission(Model model) {
-        List<RoleApp> roles = roleRepository.findAll();
+        List<RoleApp> roles = roleRepository.findRoleAppsByDeletedFalse();
         List<Permission> permissions = permissionRepository.findAll();
         model.addAttribute("role", new RoleApp());
         model.addAttribute("permissionApp", new Permission());
@@ -47,6 +46,14 @@ public class PermissionController {
     @PostMapping("/permission")
     public String CreateOrUpdatePermission(@ModelAttribute("permissionApp") Permission permission) {
         authorityService.createOrUpdatePermission(permission);
+        return "redirect:/autorisation";
+    }
+
+    @GetMapping("/deleteRole/{id}")
+    public String deleteRole(@PathVariable Optional<Long> id) {
+        RoleApp roleApp = roleRepository.findById(id).get();
+        roleApp.setDeleted(true);
+        authorityService.createOrUpdateRole(roleApp);
         return "redirect:/autorisation";
     }
 }

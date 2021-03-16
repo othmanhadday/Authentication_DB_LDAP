@@ -41,15 +41,22 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public RoleApp createOrUpdateRole(RoleApp roleApp) {
         if (roleApp.getId() == null) {
+            roleApp.setName("ROLE_" + roleApp.getName());
             roleApp = roleRepository.save(roleApp);
             return roleApp;
         } else {
             Optional<RoleApp> roleOptional = roleRepository.findById(roleApp.getId());
             if (roleOptional.isPresent()) {
                 RoleApp newRole = roleOptional.get();
-                newRole.setId(roleApp.getId());
-                newRole.setName("ROLE_" + roleApp.getName());
-                newRole.setPermissions(roleApp.getPermissions());
+                if (roleApp.getName() !=null){
+                    newRole.setName(roleApp.getName());
+                }
+                if (roleApp.getPermissions() !=null){
+                    newRole.setPermissions(roleApp.getPermissions());
+                }
+                if (roleApp.isDeleted()==true){
+                    newRole.setDeleted(roleApp.isDeleted());
+                }
                 return roleRepository.save(newRole);
             } else {
                 roleApp = roleRepository.save(roleApp);

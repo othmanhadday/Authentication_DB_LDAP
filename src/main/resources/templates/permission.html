@@ -22,56 +22,31 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
                             <li class="breadcrumb-item active">Basic Form</li>
                         </ol>
-                        <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i
-                                class="fa fa-plus-circle"></i> Create New
+                        <button type="button" class="btn btn-info d-none d-lg-block m-l-15">
+                            <i class="mdi mdi-account-multiple-plus"></i> Create New
                         </button>
                     </div>
                 </div>
             </div>
-            <!--                Role card -->
-            <div class="row">
-                <div class="col-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Ajouter des nouveaux Roles</h4>
-                            <form th:action="@{/autorisation/role}" method="post" th:object="${role}" class="mt-4">
-                                <div class="form-group">
-                                    <label for="roleName">Role name</label>
-                                    <input type="text" th:field="*{name}" class="form-control" id="roleName"
-                                           placeholder="Enter Role Name">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Ajouter des nouveaux Permission</h4>
-                            <form th:action="@{/autorisation/permission}" method="post" th:object="${permissionApp}"
-                                  class="mt-4">
-                                <div class="form-group">
-                                    <label for="permission">Permission name</label>
-                                    <input type="text" th:field="*{permission}" class="form-control" id="permission"
-                                           placeholder="Enter Permission Name">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        </div>
-                    </div>
+            <div class="container-fluid">
+                <div class="row my-2">
+                    <button type="button" id="newRole" class="btn btn-info ml-auto">
+                        <i class="mdi mdi-account-multiple-plus"></i> Create New
+                    </button>
                 </div>
             </div>
 
+
+            <!--                Role card -->
             <div class="row">
                 <!-- column -->
-                <div class="col-lg-6">
+                <div class="col">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Role Table</h4>
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table table-hover">
                                     <thead>
                                     <tr>
                                         <th>#</th>
@@ -84,38 +59,24 @@
                                         <td th:text="${role.id}"></td>
                                         <td th:text="${role.name}"></td>
                                         <td>
-                                            <span th:each="permission :${role.permissions}"
-                                                  th:text="${permission.permission}" class="label label-danger">
-                                            </span>
+                                            <div th:each="permission :${role.permissions}">
+                                                <span th:text="${permission.permission}"
+                                                      class="label label-danger"></span>
+                                            </div>
                                         </td>
                                         <td>
-                                            <button class="btn btn-success editRole" th:id="${role.id}">
-                                                <i class="mdi-account-edit mdi"></i>
-                                            </button>
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                                <button class="btn btn-success editRole" th:id="${role.id}">
+                                                    <i class="mdi-account-edit mdi"></i>
+                                                </button>
+                                                <button class="btn btn-danger deleteRole" th:id="${role.id}">
+                                                    <i class="mdi-delete mdi"></i>
+                                                </button>
+                                                <button class="btn btn-primary roleUsers" th:id="${role.id}">
+                                                    <i class="mdi-format-list-bulleted mdi"></i>
+                                                </button>
+                                            </div>
                                         </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Permission Table</h4>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Permission Name</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="permission: ${allPermissions}">
-                                        <td th:text="${permission.id}"></td>
-                                        <td th:text="${permission.permission}"></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -125,18 +86,19 @@
                 </div>
             </div>
         </div>
+
         <!--        modal pour edit or ajouter un nouveaux Role-->
         <div class="modal" id="roleModal">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Modal Heading</h4>
+                        <h4 class="modal-title">Create or Update Role</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <form th:object="${role}" method="post" th:action="@{/autorisation/role}">
+                    <form th:object="${role}" method="post" th:action="@{/autorisation/role}">
+                        <!-- Modal body -->
+                        <div class="modal-body">
                             <input type="hidden" th:field="*{id}" id="role_id">
                             <div class="row">
                                 <div class="col-12">
@@ -151,35 +113,110 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="custom-control custom-checkbox" th:each="permission :${allPermissions}">
-                                        <label>
-                                            <input th:value="${permission.id}" id="permissionUpdate" th:field="*{permissions}"
-                                                   type="checkbox"/> <span
-                                                th:text="${permission.permission}" th:remove="tag"> </span>
-                                        </label>
+                                <div class="form-group">
+                                    <label for="permissionUpdate">Permissions</label>
+                                    <div class="col-sm-12">
+                                        <div class="custom-control custom-checkbox"
+                                             th:each="permission :${allPermissions}">
+                                            <label>
+                                                <input th:value="${permission.id}" id="permissionUpdate"
+                                                       th:field="*{permissions}"
+                                                       type="checkbox"/>
+                                                <span th:text="${permission.permission}" th:remove="tag"> </span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <input type="submit" class="btn btn-primary" value="submit"/>
-                        </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect">Soumettre</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!--        modal pour supprimer un Role-->
+        <div class="modal" id="roleDeleteModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Supprimer un Role</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        Etes-vous sur de supprimer ce Role?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close
+                        </button>
+                        <a type="submit" class="btn btn-info waves-effect" id="deleteRoleBtn">
+                            Soumettre
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!--  modal pour afficher les user d chaque role -->
+        <div class="modal bs-example-modal-lg" id="modalShowAllUserOfRole">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myLargeModalLabel">Afficher les utilisateurs de chaque role</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <td>Id</td>
+                                <td>Nom</td>
+                                <td>username</td>
+                            </tr>
+                            </thead>
+                            <tbody id="userByRole">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close
+                        </button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
         </div>
     </div>
 </div>
 
 
-
 <section layout:fragment="js">
     <script>
+        // add new role et affecte
+        $(document).on('click', '#newRole', function () {
+            $("#role_id").val("");
+            $("#name").val("");
+            $("input[id='permissionUpdate']").each(function (index, val) {
+                $("input[id='permissionUpdate']")[index].checked = false;
+            })
+            $('#roleModal').modal('show');
+        })
+
+        // edit Role et affecter le des permission
         $(document).on('click', '.editRole', function () {
             $("#role_id").val("");
             $("#name").val("");
             $("input[id='permissionUpdate']").each(function (index, val) {
                 $("input[id='permissionUpdate']")[index].checked = false;
-
             })
             var id = $(this).attr('id');
             $.ajax({
@@ -189,18 +226,64 @@
                 success: function (data) {
                     $("#role_id").val(data.id);
                     $("#name").val(data.name);
-                    console.log(data.permissions);
 
                     $.each(data.permissions, function (i, v) {
                         console.log(v);
                         $("input[id='permissionUpdate']").each(function (index, val) {
-                            console.log($(this).val());
                             if (v.id == $(this).val()) {
                                 $("input[id='permissionUpdate']")[index].checked = true;
                             }
                         })
                     })
                     $('#roleModal').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        // edit Role et affecter le des permission
+        $(document).on('click', '.deleteRole', function () {
+            var id = $(this).attr('id');
+            $('#deleteRoleBtn').attr('href', '/autorisation/deleteRole/' + id);
+            $('#roleDeleteModal').modal('show');
+
+        });
+
+        // show all users of role
+        $(document).on('click', '.roleUsers', function () {
+            var id = $(this).attr('id');
+            $('#userByRole').empty();
+            $.ajax({
+                type: 'get',
+                url: "/roles/" + id,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                    console.log(id);
+                    $('#modalShowAllUserOfRole').modal('show');
+                    var tbody = ''
+                    console.log(data.length);
+                    if (data.length == 0) {
+                        tbody = '<tr class="justify-content-center"> Empty </tr>'
+                    } else {
+                        $.each(data, function (index, value) {
+                            if (value.nom == null) {
+                                value.nom = "-";
+                            }
+                            if (value.username == null) {
+                                value.username = "-";
+                            }
+                            tbody += '<tr>' +
+                                '<td>' + value.id + '</td>' +
+                                '<td>' + value.nom + '</td>' +
+                                '<td>' + value.username + '</td>' +
+                                '</tr>'
+                        });
+                    }
+
+                    $('#userByRole').append(tbody);
                 },
                 error: function (data) {
                     console.log(data);

@@ -22,7 +22,9 @@ public class UserApp {
     @Column(unique = true)
     private String username;
     private String password;
+    private String email;
     private boolean activate;
+    private boolean deleted;
     @ManyToMany
     @JoinTable(
             name = "user_roles",
@@ -35,7 +37,7 @@ public class UserApp {
     )
     private Collection<RoleApp> roles;
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_permissions",
             joinColumns = @JoinColumn(

@@ -1,6 +1,7 @@
 package com.oth.stageapp.security;
 
 import com.oth.stageapp.entities.Permission;
+import com.oth.stageapp.entities.RoleApp;
 import com.oth.stageapp.entities.UserApp;
 import com.oth.stageapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,14 @@ public class CustomLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator 
     public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) {
         List<GrantedAuthority> gas = new ArrayList<>();
         UserApp userApp = userRepository.findUserAppByUsername(username);
+
         if (userApp != null) {
             for (Permission permission : userApp.getPermissions()) {
                 gas.add(new SimpleGrantedAuthority(permission.getPermission()));
+
+//                for (Permission permission : role.getPermissions()) {
+//                    gas.add(new SimpleGrantedAuthority(permission.getPermission()));
+//                }
             }
         } else {
             gas = new ArrayList<>();

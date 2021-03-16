@@ -49,11 +49,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public RoleApp createRole(String name, Collection<Permission> permissions) {
         RoleApp role = roleRepository.findRoleAppByName(name);
         if (role == null) {
-            role = new RoleApp(null, name, permissions);
+            role = new RoleApp(null, name,false, permissions);
             return roleRepository.save(role);
         }
         return role;
     }
+
 
 
     @Override

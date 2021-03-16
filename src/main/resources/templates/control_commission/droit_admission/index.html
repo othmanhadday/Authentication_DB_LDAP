@@ -39,7 +39,8 @@
                     <div class="card-body">
                         <h4 class="card-title">Import files</h4>
 
-                        <form method="post" th:action="@{/control_commission/droit_admission/importFile}" enctype="multipart/form-data">
+                        <form method="post" th:action="@{/control_commission/droit_admission/importFile}"
+                              enctype="multipart/form-data">
                             <div class="form-group">
                                 <label>Custom File upload</label>
                                 <div class="input-group">
@@ -58,7 +59,28 @@
                     </div>
                 </div>
             </div>
+            <div class="col-6" th:if="${products}">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>Product name</td>
+                        <td>price</td>
+                        <td>Categoies</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products}">
+                        <td th:text="${product.id}"></td>
+                        <td th:text="${product.product_name}"></td>
+                        <td th:text="${product.price}"></td>
+                        <td th:text="${product.category}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
 
     </div>
 

@@ -18,6 +18,10 @@ public class RoleApp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private boolean deleted;
+//    @ManyToMany
+//    private Collection<UserApp> users;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_permissions",

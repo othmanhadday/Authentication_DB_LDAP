@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 class UsernamePasswordAuthFilter
@@ -40,9 +42,7 @@ class UsernamePasswordAuthFilter
                 userApp.setPassword(passwordEncoder.getBCPE().encode("maroclear"));
                 userRepository.save(userApp);
             }
-
         }
-
         filterChain.doFilter(request, response);
     }
 }
